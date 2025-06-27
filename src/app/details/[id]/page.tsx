@@ -210,7 +210,7 @@ export default function Details({
       <div className="min-h-screen w-full bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white">
         {/* Control Buttons - Top Right with scroll hide animation */}
         <div
-          className={`fixed top-4 right-4 z-50 flex gap-2 sm:gap-3 transition-all duration-300 ${
+          className={`fixed top-6 right-6 z-50 flex gap-2 sm:gap-3 transition-all duration-300 ${
             isScrolled
               ? "transform translate-y-[-120px] opacity-0"
               : "transform translate-y-0 opacity-100"
@@ -235,8 +235,8 @@ export default function Details({
             {/* Server Dropdown */}
             {showServerSelector && (
               <div className="absolute top-full right-0 mt-2 w-48 sm:w-48 liquid-glass-dropdown rounded-xl sm:rounded-2xl border border-white/20 overflow-hidden shadow-2xl backdrop-blur-3xl">
-                <div className="p-3 sm:p-4 border-b border-white/20 glass-header">
-                  <div className="text-xs sm:text-sm font-medium text-orange-200 px-2 py-1">
+                <div className="p-2 sm:p-4 border-b border-white/20 glass-header">
+                  <div className="text-xs sm:text-sm font-medium text-orange-200 px-1 py-1">
                     Select Server:
                   </div>
                 </div>
