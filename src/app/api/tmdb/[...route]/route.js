@@ -6,7 +6,6 @@ export async function POST(req) {
     const route = req.nextUrl.pathname.split('/api/tmdb/')[1];
     const body = await req.json();
     const { queryParams } = body;
-    console.log(queryParams);
 
     const response = await axios.get(`https://api.themoviedb.org/3/${route}`, {
       params: {
