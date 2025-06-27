@@ -2,7 +2,17 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { Search, Play, Calendar, Star, TrendingUp, Filter, ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react";
+import {
+  Search,
+  Play,
+  Calendar,
+  Star,
+  TrendingUp,
+  Filter,
+  ChevronLeft,
+  ChevronRight,
+  MoreHorizontal,
+} from "lucide-react";
 import tmdb from "../api/tmdb";
 
 const API_KEY = "07871a74a8d65cd2e1342eaf26324e65";
@@ -70,7 +80,10 @@ export default function Home() {
           });
           // Add media_type for consistency
           if (res && res.data.results) {
-            res.data.results = res.data.results.map((item: Movie) => ({ ...item, media_type: "tv" }));
+            res.data.results = res.data.results.map((item: Movie) => ({
+              ...item,
+              media_type: "tv",
+            }));
           }
         } else if (activeSection === "topRatedMovies") {
           res = await tmdb.get("/movie/top_rated", {
@@ -82,10 +95,13 @@ export default function Home() {
           });
           // Add media_type for consistency
           if (res && res.data.results) {
-            res.data.results = res.data.results.map((item: Movie) => ({ ...item, media_type: "movie" }));
+            res.data.results = res.data.results.map((item: Movie) => ({
+              ...item,
+              media_type: "movie",
+            }));
           }
         }
-        
+
         if (res) {
           setMovies(res.data.results || []);
           setTotalPages(res.data.total_pages || 1);
@@ -143,13 +159,13 @@ export default function Home() {
       handleSearch(fakeEvent, newPage);
     }
     // Scroll to top when changing pages
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const getPaginationPages = () => {
     const pages = [];
     const maxVisiblePages = 5;
-    
+
     if (totalPages <= maxVisiblePages) {
       for (let i = 1; i <= totalPages; i++) {
         pages.push(i);
@@ -159,43 +175,49 @@ export default function Home() {
         for (let i = 1; i <= 4; i++) {
           pages.push(i);
         }
-        pages.push('ellipsis');
+        pages.push("ellipsis");
         pages.push(totalPages);
       } else if (currentPage >= totalPages - 2) {
         pages.push(1);
-        pages.push('ellipsis');
+        pages.push("ellipsis");
         for (let i = totalPages - 3; i <= totalPages; i++) {
           pages.push(i);
         }
       } else {
         pages.push(1);
-        pages.push('ellipsis');
+        pages.push("ellipsis");
         for (let i = currentPage - 1; i <= currentPage + 1; i++) {
           pages.push(i);
         }
-        pages.push('ellipsis');
+        pages.push("ellipsis");
         pages.push(totalPages);
       }
     }
-    
+
     return pages;
   };
 
-  const handleCardClick = useCallback((movie: Movie) => {
-    const type = movie.media_type === "tv" ? "tv" : "movie";
-    router.push(`/details/${movie.id}?type=${type}`);
-  }, [router]);
+  const handleCardClick = useCallback(
+    (movie: Movie) => {
+      const type = movie.media_type === "tv" ? "tv" : "movie";
+      router.push(`/details/${movie.id}?type=${type}`);
+    },
+    [router]
+  );
 
   // Memoized filtered movies for better performance
   const filteredMovies = useMemo(() => {
-    return movies.filter(movie => {
+    return movies.filter((movie) => {
       if (selectedFilter === "all") return true;
       return movie.media_type === selectedFilter;
     });
   }, [movies, selectedFilter]);
 
   // Memoized pagination pages
-  const paginationPages = useMemo(() => getPaginationPages(), [currentPage, totalPages]);
+  const paginationPages = useMemo(
+    () => getPaginationPages(),
+    [currentPage, totalPages]
+  );
 
   // Debounced search function
   const debouncedSearch = useCallback(
@@ -220,18 +242,18 @@ export default function Home() {
       <div className="fixed inset-0 z-0">
         {/* Base gradient with liquid flow */}
         <div className="absolute inset-0 bg-gradient-to-br from-slate-900/90 via-purple-900/90 to-slate-900/90"></div>
-        
+
         {/* Flowing liquid blobs */}
         <div className="absolute top-10 left-10 w-96 h-96 bg-gradient-to-br from-purple-500/20 to-indigo-600/20 rounded-full blur-3xl animate-pulse"></div>
         <div className="absolute top-1/3 right-20 w-80 h-80 bg-gradient-to-br from-violet-500/20 to-purple-600/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
         <div className="absolute bottom-20 left-1/4 w-72 h-72 bg-gradient-to-br from-indigo-500/20 to-purple-600/20 rounded-full blur-3xl animate-pulse delay-2000"></div>
-        
+
         {/* Flowing liquid waves */}
         <div className="absolute inset-0 opacity-30">
           <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-transparent via-purple-500/10 to-transparent transform -skew-y-12 animate-pulse delay-500"></div>
           <div className="absolute top-1/4 left-0 w-full h-full bg-gradient-to-r from-transparent via-violet-500/10 to-transparent transform skew-y-12 animate-pulse delay-1500"></div>
         </div>
-        
+
         {/* Glass texture overlay */}
         <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-white/5 backdrop-blur-3xl"></div>
       </div>
@@ -255,7 +277,7 @@ export default function Home() {
             <div className="relative group">
               {/* Glowing liquid border */}
               <div className="absolute inset-0 bg-gradient-to-r from-purple-500/30 via-indigo-500/30 to-violet-500/30 rounded-3xl blur-xl group-hover:blur-2xl transition-all duration-700 animate-pulse"></div>
-              
+
               {/* Glass container */}
               <div className="relative bg-white/10 backdrop-blur-3xl border border-white/20 rounded-3xl shadow-2xl">
                 <div className="absolute inset-0 bg-gradient-to-r from-white/5 via-transparent to-white/5 rounded-3xl"></div>
@@ -267,12 +289,12 @@ export default function Home() {
                     type="text"
                     placeholder="Search movies, series, actors..."
                     value={search}
-                    onChange={e => {
+                    onChange={(e) => {
                       setSearch(e.target.value);
                       debouncedSearch(e.target.value);
                     }}
                     onKeyPress={(e) => {
-                      if (e.key === 'Enter') {
+                      if (e.key === "Enter") {
                         e.preventDefault();
                         handleSearch(e);
                       }
@@ -282,12 +304,15 @@ export default function Home() {
                   <button
                     onClick={handleSearch}
                     disabled={loading}
-                    className="absolute right-2 px-6 py-2 bg-gradient-to-r from-purple-500/80 via-indigo-500/80 to-violet-500/80 backdrop-blur-xl hover:from-purple-400 hover:via-indigo-400 hover:to-violet-400 rounded-2xl font-semibold transition-all duration-500 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:hover:scale-100 border border-white/20"
+                    className="absolute right-2 px-3 sm:px-6 py-2 bg-gradient-to-r from-purple-500/80 via-indigo-500/80 to-violet-500/80 backdrop-blur-xl hover:from-purple-400 hover:via-indigo-400 hover:to-violet-400 rounded-2xl font-semibold transition-all duration-500 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:hover:scale-100 border border-white/20"
                   >
                     {loading ? (
                       <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
                     ) : (
-                      "Search"
+                      <>
+                        <span className="hidden sm:inline">Search</span>
+                        <Search className="sm:hidden w-5 h-5" />
+                      </>
                     )}
                   </button>
                 </div>
@@ -308,33 +333,41 @@ export default function Home() {
         {/* Section Header with Liquid Glass */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 gap-4">
           {/* Section Navigation */}
-          <div className="flex flex-wrap items-center gap-2 bg-white/10 backdrop-blur-3xl rounded-2xl p-2 border border-white/20 shadow-2xl">
+          <div className="flex flex-wrap items-center gap-1 sm:gap-2 bg-white/10 backdrop-blur-3xl rounded-2xl p-1 pl-6 sm:p-2 border border-white/20 shadow-2xl">
             {[
               { key: "trending", label: "Trending", icon: TrendingUp },
               { key: "topRatedMovies", label: "Top Movies", icon: Play },
-              { key: "topRatedTV", label: "Top Series", icon: Calendar }
+              { key: "topRatedTV", label: "Top Series", icon: Calendar },
             ].map(({ key, label, icon: Icon }) => (
               <button
                 key={key}
                 onClick={() => setActiveSection(key)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-xl font-medium transition-all duration-500 ${
+                className={`flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-1 sm:py-2 rounded-xl font-medium transition-all duration-500 ${
                   activeSection === key
                     ? "bg-gradient-to-r from-purple-500/80 to-violet-500/80 text-white shadow-lg backdrop-blur-xl border border-white/20"
                     : "text-white/70 hover:text-white hover:bg-white/10 backdrop-blur-xl"
                 }`}
               >
                 <Icon className="w-4 h-4" />
-                <span className="text-sm sm:text-base">{label}</span>
+                <span className="text-xs sm:text-sm">{label}</span>
               </button>
             ))}
           </div>
 
           {/* Current Section Title with Results Count */}
           <div className="flex items-center gap-3 bg-white/10 backdrop-blur-3xl rounded-2xl px-6 py-3 border border-white/20">
-            {activeSection === "trending" && <TrendingUp className="w-6 h-6 text-purple-400" />}
-            {activeSection === "topRatedMovies" && <Play className="w-6 h-6 text-purple-400" />}
-            {activeSection === "topRatedTV" && <Calendar className="w-6 h-6 text-violet-400" />}
-            {activeSection === "search" && <Search className="w-6 h-6 text-violet-400" />}
+            {activeSection === "trending" && (
+              <TrendingUp className="w-6 h-6 text-purple-400" />
+            )}
+            {activeSection === "topRatedMovies" && (
+              <Play className="w-6 h-6 text-purple-400" />
+            )}
+            {activeSection === "topRatedTV" && (
+              <Calendar className="w-6 h-6 text-violet-400" />
+            )}
+            {activeSection === "search" && (
+              <Search className="w-6 h-6 text-violet-400" />
+            )}
             <div>
               <h2 className="text-2xl sm:text-3xl font-bold text-white">
                 {activeSection === "trending" && "Trending Now"}
@@ -344,7 +377,8 @@ export default function Home() {
               </h2>
               {totalResults > 0 && (
                 <p className="text-sm text-white/60">
-                  {totalResults.toLocaleString()} results • Page {currentPage} of {totalPages}
+                  {totalResults.toLocaleString()} results • Page {currentPage}{" "}
+                  of {totalPages}
                 </p>
               )}
             </div>
@@ -354,23 +388,23 @@ export default function Home() {
         {/* Content Filter - Only show for search results */}
         {activeSection === "search" && (
           <div className="flex justify-center mb-6">
-            <div className="flex items-center gap-2 bg-white/10 backdrop-blur-3xl rounded-2xl p-2 border border-white/20 shadow-2xl">
+            <div className="flex items-center gap-1 sm:gap-2 bg-white/10 backdrop-blur-3xl rounded-2xl p-1 sm:p-2 border border-white/20 shadow-2xl">
               {[
                 { key: "all", label: "All", icon: Filter },
                 { key: "movie", label: "Movies", icon: Play },
-                { key: "tv", label: "Series", icon: Calendar }
+                { key: "tv", label: "Series", icon: Calendar },
               ].map(({ key, label, icon: Icon }) => (
                 <button
                   key={key}
                   onClick={() => setSelectedFilter(key)}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-xl font-medium transition-all duration-500 ${
+                  className={`flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-1 sm:py-2 rounded-xl font-medium transition-all duration-500 ${
                     selectedFilter === key
                       ? "bg-gradient-to-r from-purple-500/80 to-violet-500/80 text-white shadow-lg backdrop-blur-xl border border-white/20"
                       : "text-white/70 hover:text-white hover:bg-white/10 backdrop-blur-xl"
                   }`}
                 >
                   <Icon className="w-4 h-4" />
-                  <span className="hidden sm:inline">{label}</span>
+                  <span className="text-xs sm:text-sm">{label}</span>
                 </button>
               ))}
             </div>
@@ -391,7 +425,8 @@ export default function Home() {
                 </div>
               </div>
             ))
-          ) : (activeSection === "search" ? filteredMovies : movies).length === 0 ? (
+          ) : (activeSection === "search" ? filteredMovies : movies).length ===
+            0 ? (
             <div className="col-span-full text-center py-16">
               <div className="max-w-md mx-auto bg-white/10 backdrop-blur-3xl rounded-3xl p-8 border border-white/20 shadow-2xl animate-fade-in">
                 <div className="w-24 h-24 bg-gradient-to-br from-purple-500/20 to-violet-500/20 rounded-full flex items-center justify-center mx-auto mb-4 backdrop-blur-xl border border-white/20 animate-bounce">
@@ -401,75 +436,82 @@ export default function Home() {
                   {loading ? "Loading..." : "No results found"}
                 </h3>
                 <p className="text-white/60">
-                  {loading ? "Fetching content..." : "Try searching for something else or switch sections"}
+                  {loading
+                    ? "Fetching content..."
+                    : "Try searching for something else or switch sections"}
                 </p>
               </div>
             </div>
           ) : (
-            (activeSection === "search" ? filteredMovies : movies).map((movie, idx) => (
-              <div 
-                key={`${movie.id}-${idx}`} 
-                className="group cursor-pointer h-full animate-fade-in-up" 
-                style={{ animationDelay: `${idx * 50}ms` }}
-                onClick={() => handleCardClick(movie)}
-              >
-                <div className="relative overflow-hidden rounded-3xl bg-white/10 backdrop-blur-3xl border border-white/20 hover:border-white/40 transition-all duration-700 hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/20 h-full flex flex-col group-hover:bg-white/15">
-                  {/* Liquid glow effect */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 via-indigo-500/10 to-violet-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700 rounded-3xl"></div>
-                  
-                  {/* Poster */}
-                  <div className="aspect-[2/3] overflow-hidden bg-gradient-to-br from-purple-900/20 via-indigo-900/20 to-violet-900/20 flex-shrink-0 relative rounded-t-3xl">
-                    {movie.poster_path ? (
-                      <Image
-                        src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-                        alt={movie.title || movie.name || "Movie poster"}
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                        width={500}
-                        height={750}
-                        loading="lazy"
-                        placeholder="blur"
-                        blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center">
-                        <Play className="w-12 h-12 text-white/30" />
-                      </div>
-                    )}
-                    
-                    {/* Liquid overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                      <div className="absolute bottom-4 left-4 right-4 flex items-end justify-between">
-                        <div className="flex items-center gap-2 mb-2 bg-white/20 backdrop-blur-xl rounded-full px-3 py-1 border border-white/20">
-                          <Star className="w-4 h-4 text-yellow-400 fill-current" />
-                          <span className="text-sm font-medium text-white">
-                            {movie.vote_average?.toFixed(1) || "N/A"}
-                          </span>
+            (activeSection === "search" ? filteredMovies : movies).map(
+              (movie, idx) => (
+                <div
+                  key={`${movie.id}-${idx}`}
+                  className="group cursor-pointer h-full animate-fade-in-up"
+                  style={{ animationDelay: `${idx * 50}ms` }}
+                  onClick={() => handleCardClick(movie)}
+                >
+                  <div className="relative overflow-hidden rounded-3xl bg-white/10 backdrop-blur-3xl border border-white/20 hover:border-white/40 transition-all duration-700 hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/20 h-full flex flex-col group-hover:bg-white/15">
+                    {/* Liquid glow effect */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 via-indigo-500/10 to-violet-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700 rounded-3xl"></div>
+
+                    {/* Poster */}
+                    <div className="aspect-[2/3] overflow-hidden bg-gradient-to-br from-purple-900/20 via-indigo-900/20 to-violet-900/20 flex-shrink-0 relative rounded-t-3xl">
+                      {movie.poster_path ? (
+                        <Image
+                          src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+                          alt={movie.title || movie.name || "Movie poster"}
+                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                          width={500}
+                          height={750}
+                          loading="lazy"
+                          placeholder="blur"
+                          blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center">
+                          <Play className="w-12 h-12 text-white/30" />
                         </div>
-                        <div className="w-12 h-12 bg-white/20 backdrop-blur-3xl rounded-full flex items-center justify-center border border-white/30 hover:bg-white/30 transition-all duration-300 group-hover:scale-110">
-                          <Play className="w-6 h-6 text-white ml-1" />
+                      )}
+
+                      {/* Liquid overlay */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                        <div className="absolute bottom-4 left-4 right-4 flex items-end justify-between">
+                          <div className="flex items-center gap-2 mb-2 bg-white/20 backdrop-blur-xl rounded-full px-3 py-1 border border-white/20">
+                            <Star className="w-4 h-4 text-yellow-400 fill-current" />
+                            <span className="text-sm font-medium text-white">
+                              {movie.vote_average?.toFixed(1) || "N/A"}
+                            </span>
+                          </div>
+                          <div className="w-12 h-12 bg-white/20 backdrop-blur-3xl rounded-full flex items-center justify-center border border-white/30 hover:bg-white/30 transition-all duration-300 group-hover:scale-110">
+                            <Play className="w-6 h-6 text-white ml-1" />
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
 
-                  {/* Content with liquid glass effect */}
-                  <div className="p-4 flex-1 flex flex-col justify-between bg-white/5 backdrop-blur-xl rounded-b-3xl border-t border-white/10">
-                    <h3 className="font-bold text-white group-hover:text-purple-300 transition-colors duration-500 text-sm sm:text-base mb-2 line-clamp-2 min-h-[2.5rem]">
-                      {movie.title || movie.name}
-                    </h3>
-                    <div className="flex items-center justify-between text-xs sm:text-sm text-white/70 mt-auto">
-                      <span className="bg-white/10 backdrop-blur-xl px-2 py-1 rounded-full border border-white/20">
-                        {movie.release_date ? movie.release_date.slice(0, 4) : 
-                         movie.first_air_date ? movie.first_air_date.slice(0, 4) : "N/A"}
-                      </span>
-                      <span className="capitalize bg-gradient-to-r from-purple-500/20 to-violet-500/20 backdrop-blur-xl px-3 py-1 rounded-full border border-white/20">
-                        {movie.media_type === "tv" ? "Series" : "Movie"}
-                      </span>
+                    {/* Content with liquid glass effect */}
+                    <div className="p-4 flex-1 flex flex-col justify-between bg-white/5 backdrop-blur-xl rounded-b-3xl border-t border-white/10">
+                      <h3 className="font-bold text-white group-hover:text-purple-300 transition-colors duration-500 text-sm sm:text-base mb-2 line-clamp-2 min-h-[2.5rem]">
+                        {movie.title || movie.name}
+                      </h3>
+                      <div className="flex items-center justify-between text-xs sm:text-sm text-white/70 mt-auto">
+                        <span className="bg-white/10 backdrop-blur-xl px-2 py-1 rounded-full border border-white/20">
+                          {movie.release_date
+                            ? movie.release_date.slice(0, 4)
+                            : movie.first_air_date
+                            ? movie.first_air_date.slice(0, 4)
+                            : "N/A"}
+                        </span>
+                        <span className="capitalize bg-gradient-to-r from-purple-500/20 to-violet-500/20 backdrop-blur-xl px-3 py-1 rounded-full border border-white/20">
+                          {movie.media_type === "tv" ? "Series" : "Movie"}
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))
+              )
+            )
           )}
         </div>
 
@@ -477,25 +519,25 @@ export default function Home() {
         {totalPages > 1 && !loading && (
           <div className="mt-12 flex flex-col items-center gap-4">
             {/* Pagination Controls */}
-            <div className="flex items-center gap-2 bg-white/10 backdrop-blur-3xl rounded-2xl p-2 border border-white/20 shadow-2xl">
+            <div className="flex items-center gap-1 sm:gap-2 bg-white/10 backdrop-blur-3xl rounded-2xl p-1 sm:p-2 border border-white/20 shadow-2xl">
               {/* Previous Button */}
               <button
                 onClick={() => handlePageChange(currentPage - 1)}
                 disabled={currentPage === 1}
-                className={`p-2 rounded-xl transition-all duration-300 ${
+                className={`p-1 sm:p-2 rounded-xl transition-all duration-300 ${
                   currentPage === 1
                     ? "text-white/30 cursor-not-allowed"
                     : "text-white hover:bg-white/10 hover:text-purple-400 active:scale-95"
                 }`}
               >
-                <ChevronLeft className="w-5 h-5" />
+                <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
               </button>
 
               {/* Page Numbers */}
               <div className="flex items-center gap-1">
                 {paginationPages.map((page, idx) => (
                   <React.Fragment key={idx}>
-                    {page === 'ellipsis' ? (
+                    {page === "ellipsis" ? (
                       <div className="px-3 py-2 text-white/50">
                         <MoreHorizontal className="w-4 h-4" />
                       </div>
@@ -519,21 +561,27 @@ export default function Home() {
               <button
                 onClick={() => handlePageChange(currentPage + 1)}
                 disabled={currentPage === totalPages}
-                className={`p-2 rounded-xl transition-all duration-300 ${
+                className={`p-1 sm:p-2 rounded-xl transition-all duration-300 ${
                   currentPage === totalPages
                     ? "text-white/30 cursor-not-allowed"
                     : "text-white hover:bg-white/10 hover:text-purple-400 active:scale-95"
                 }`}
               >
-                <ChevronRight className="w-5 h-5" />
+                <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
               </button>
             </div>
 
             {/* Page Info */}
             <div className="bg-white/10 backdrop-blur-3xl rounded-2xl px-6 py-3 border border-white/20">
               <p className="text-white/70 text-sm text-center">
-                Showing page <span className="text-purple-400 font-semibold">{currentPage}</span> of{" "}
-                <span className="text-violet-400 font-semibold">{totalPages}</span>
+                Showing page{" "}
+                <span className="text-purple-400 font-semibold">
+                  {currentPage}
+                </span>{" "}
+                of{" "}
+                <span className="text-violet-400 font-semibold">
+                  {totalPages}
+                </span>
                 {totalResults > 0 && (
                   <span className="ml-2">
                     ({totalResults.toLocaleString()} total results)
@@ -615,8 +663,7 @@ export default function Home() {
           background: rgba(15, 23, 42, 0.3);
           backdrop-filter: blur(20px) saturate(180%);
           -webkit-backdrop-filter: blur(20px) saturate(180%);
-          box-shadow: 
-            0 8px 32px 0 rgba(0, 0, 0, 0.4),
+          box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4),
             inset 0 1px 0 rgba(255, 255, 255, 0.1);
           border: 1px solid rgba(255, 255, 255, 0.15);
         }
@@ -637,7 +684,12 @@ export default function Home() {
         }
 
         .shimmer {
-          background: linear-gradient(90deg, rgba(255,255,255,0.1) 25%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0.1) 75%);
+          background: linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0.1) 25%,
+            rgba(255, 255, 255, 0.2) 50%,
+            rgba(255, 255, 255, 0.1) 75%
+          );
           background-size: 200px 100%;
           animation: shimmer 1.5s infinite;
         }
