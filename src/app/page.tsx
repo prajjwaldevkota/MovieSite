@@ -13,9 +13,6 @@ import {
   ChevronRight,
   MoreHorizontal,
 } from "lucide-react";
-import tmdb from "../api/tmdb";
-
-const API_KEY = "07871a74a8d65cd2e1342eaf26324e65";
 
 // Type definitions for better performance
 interface Movie {
@@ -61,51 +58,39 @@ export default function Home() {
       setLoading(true);
       setError("");
       try {
-        let res: { data: ApiResponse } | undefined;
+        let data;
         if (activeSection === "trending") {
-          res = await tmdb.get("/trending/all/day", {
-            params: {
-              api_key: API_KEY,
-              language: "en-US",
-              page: currentPage,
-            },
+          const res = await fetch("/api/tmdb/trending/all/day", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ queryParams: { language: "en-US", page: currentPage } }),
           });
+          data = await res.json();
         } else if (activeSection === "topRatedTV") {
-          res = await tmdb.get("/tv/top_rated", {
-            params: {
-              api_key: API_KEY,
-              language: "en-US",
-              page: currentPage,
-            },
+          const res = await fetch("/api/tmdb/tv/top_rated", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ queryParams: { language: "en-US", page: currentPage } }),
           });
-          // Add media_type for consistency
-          if (res && res.data.results) {
-            res.data.results = res.data.results.map((item: Movie) => ({
-              ...item,
-              media_type: "tv",
-            }));
+          data = await res.json();
+          if (data && data.results) {
+            data.results = data.results.map((item: Movie) => ({ ...item, media_type: "tv" }));
           }
         } else if (activeSection === "topRatedMovies") {
-          res = await tmdb.get("/movie/top_rated", {
-            params: {
-              api_key: API_KEY,
-              language: "en-US",
-              page: currentPage,
-            },
+          const res = await fetch("/api/tmdb/movie/top_rated", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ queryParams: { language: "en-US", page: currentPage } }),
           });
-          // Add media_type for consistency
-          if (res && res.data.results) {
-            res.data.results = res.data.results.map((item: Movie) => ({
-              ...item,
-              media_type: "movie",
-            }));
+          data = await res.json();
+          if (data && data.results) {
+            data.results = data.results.map((item: Movie) => ({ ...item, media_type: "movie" }));
           }
         }
-
-        if (res) {
-          setMovies(res.data.results || []);
-          setTotalPages(res.data.total_pages || 1);
-          setTotalResults(res.data.total_results || 0);
+        if (data) {
+          setMovies(data.results || []);
+          setTotalPages(data.total_pages || 1);
+          setTotalResults(data.total_results || 0);
         }
         setShowingTrending(activeSection === "trending");
       } catch (err) {
@@ -127,17 +112,15 @@ export default function Home() {
     setError("");
     setCurrentPage(page);
     try {
-      const res = await tmdb.get("/search/multi", {
-        params: {
-          query: search,
-          api_key: API_KEY,
-          language: "en-US",
-          page: page,
-        },
+      const res = await fetch("/api/tmdb/search/multi", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ queryParams: { query: search, language: "en-US", page } }),
       });
-      setMovies(res.data.results || []);
-      setTotalPages(res.data.total_pages || 1);
-      setTotalResults(res.data.total_results || 0);
+      const data = await res.json();
+      setMovies(data.results || []);
+      setTotalPages(data.total_pages || 1);
+      setTotalResults(data.total_results || 0);
       setShowingTrending(false);
       setActiveSection("search");
     } catch (err) {

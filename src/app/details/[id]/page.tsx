@@ -1,14 +1,11 @@
 "use client";
 import React, { useEffect, useState, useRef } from "react";
 import { useSearchParams } from "next/navigation";
-import tmdb from "../../../api/tmdb";
 
 interface Episode {
   episode_number: number;
   name: string;
 }
-
-const API_KEY = process.env.NEXT_PUBLIC_TMDB_API_KEY;
 
 export default function Details({
   params,
@@ -119,31 +116,31 @@ export default function Details({
     const fetchDetails = async () => {
       setLoading(true);
       if (type === "movie") {
-        const res = await tmdb.get(`/movie/${id}`, {
-          params: {
-            api_key: API_KEY,
-            language: "en-US",
-          },
+        const res = await fetch(`/api/tmdb/movie/${id}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ queryParams: { language: "en-US" } }),
         });
-        setDetails(res.data);
-        const rec = await tmdb.get(`/movie/${id}/recommendations`, {
-          params: {
-            api_key: API_KEY,
-            language: "en-US",
-          },
+        const data = await res.json();
+        setDetails(data);
+        const recRes = await fetch(`/api/tmdb/movie/${id}/recommendations`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ queryParams: { language: "en-US" } }),
         });
-        setRecommendations(rec.data.results || []);
+        const recData = await recRes.json();
+        setRecommendations(recData.results || []);
       } else {
-        const res = await tmdb.get(`/tv/${id}`, {
-          params: {
-            api_key: API_KEY,
-            language: "en-US",
-          },
+        const res = await fetch(`/api/tmdb/tv/${id}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ queryParams: { language: "en-US" } }),
         });
-        setDetails(res.data);
-        setSeasons(res.data.seasons || []);
-        if (res.data.seasons && res.data.seasons.length > 0) {
-          fetchEpisodes(res.data.id, res.data.seasons[0].season_number);
+        const data = await res.json();
+        setDetails(data);
+        setSeasons(data.seasons || []);
+        if (data.seasons && data.seasons.length > 0) {
+          fetchEpisodes(data.id, data.seasons[0].season_number);
         }
       }
       setLoading(false);
@@ -156,13 +153,13 @@ export default function Details({
     setSelectedSeason(seasonNumber);
     setSelectedEpisode(1);
     setEpisodes([]);
-    const res = await tmdb.get(`/tv/${tvId}/season/${seasonNumber}`, {
-      params: {
-        api_key: API_KEY,
-        language: "en-US",
-      },
+    const res = await fetch(`/api/tmdb/tv/${tvId}/season/${seasonNumber}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ queryParams: { language: "en-US" } }),
     });
-    setEpisodes(res.data.episodes || []);
+    const data = await res.json();
+    setEpisodes(data.episodes || []);
   };
 
   // Apple liquid glass skeleton loader
@@ -292,14 +289,14 @@ export default function Details({
         <div className="w-full liquid-glass flex flex-col gap-4 sm:gap-6 p-4 sm:p-6 pt-16 sm:pt-20 rounded-2xl sm:rounded-3xl shadow-2xl">
           {/* Video Player - Mobile optimized with margin */}
           {showPlayer && (
-            <div className="w-full mx-auto mt-4 sm:mt-6 lg:mt-8">
-              <div className="aspect-video rounded-xl sm:rounded-2xl overflow-hidden shadow-2xl border border-white/20 glass-border">
+            <div className="w-full max-w-full sm:max-w-4xl lg:max-w-5xl mx-auto mt-3 sm:mt-2 lg:mt-1">
+              <div className="aspect-video rounded-xl sm:rounded-2xl overflow-hidden shadow-2xl border border-white/20 glass-border flex justify-center items-center">
                 <iframe
                   key={`${selectedServer}-${selectedSeason}-${selectedEpisode}`}
                   src={getCurrentServerUrl()}
                   allowFullScreen
                   allow="autoplay; fullscreen"
-                  className="w-full h-full min-h-[200px] sm:min-h-[300px] lg:min-h-[400px] bg-black/80 rounded-xl sm:rounded-2xl"
+                  className="w-full h-full min-h-[100px] sm:min-h-[300px] lg:min-h-[250px] xl:min-h-[300px] bg-black/80 rounded-xl sm:rounded-2xl"
                   style={{ backdropFilter: "blur(20px)" }}
                 />
               </div>
@@ -343,7 +340,7 @@ export default function Details({
                 </div>
                 {details.genres && details.genres.length > 0 && (
                   <div className="flex flex-wrap gap-2 justify-center sm:justify-start lg:justify-center">
-                    {details.genres.map((genre) => (
+                    {details.genres.map((genre: { id: number; name: string }) => (
                       <span
                         key={genre.id}
                         className="px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm glass-pill border border-white/20 text-orange-200"
